@@ -7,13 +7,15 @@ namespace GraphQL.Instrumentation
     public class Metrics
     {
         private readonly bool _enabled;
+        private readonly int? _threshold;
         private ValueStopwatch _stopwatch;
         private readonly List<PerfRecord> _records;
         private PerfRecord _main;
 
-        public Metrics(bool enabled = true)
+        public Metrics(bool enabled = true, int? threshold = null)
         {
             _enabled = enabled;
+            _threshold = threshold;
             if (enabled)
                 _records = new List<PerfRecord>();
         }
@@ -61,7 +63,7 @@ namespace GraphQL.Instrumentation
                 return null;
 
             _main?.MarkEnd(_stopwatch.Elapsed.TotalMilliseconds);
-            return _records.OrderBy(x => x.Start).ToArray();
+            return _records.Where(x => !_threshold.HasValue || x.Duration > _threshold).OrderBy(x => x.Start).ToArray();
         }
 
         public readonly struct Marker : IDisposable

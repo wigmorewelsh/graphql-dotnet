@@ -57,7 +57,7 @@ namespace GraphQL
             if (options.Schema == null)
                 throw new InvalidOperationException("Cannot execute request if no schema is specified");
 
-            var metrics = new Metrics(options.EnableMetrics).Start(options.OperationName);
+            var metrics = new Metrics(options.EnableMetrics, options.MetricThreshold).Start(options.OperationName);
 
             options.Schema.NameConverter = options.NameConverter;
             options.Schema.Filter = options.SchemaFilter;
